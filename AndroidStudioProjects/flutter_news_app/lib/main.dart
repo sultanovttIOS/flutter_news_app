@@ -1,32 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_news_app/news_screen.dart';
-import 'package:flutter_news_app/favorites_screen.dart';
+import 'package:flutter_news_app/screens/news_screen.dart';
+import 'package:flutter_news_app/screens/favorites_screen.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: MyApp(),
-  ));
+    home: MyApp()
+    )
+  );
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  // MARK: Lifecycle
-
-  @override
-  void initState() {
-    super.initState();
-    setUpUI();
-  }
-
-  // MARK: Set up UI
-
-  void setUpUI() {
-    // В этом месте можно настроить UI, если потребуется.
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +28,14 @@ class _MyAppState extends State<MyApp> {
           elevation: 0,
           toolbarHeight: 0,
         ),
+
         body: TabBarView(
           children: [
             NewsScreen(),
-            FavoritesScreen(),
+            FavoriteScreen(),
           ],
         ),
+
         bottomNavigationBar: const TabBar(
           indicatorColor: Colors.purple,
           labelColor: Colors.purple,
