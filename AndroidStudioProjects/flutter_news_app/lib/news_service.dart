@@ -13,8 +13,9 @@ class NewsService {
 
     try {
       final response = await http.get(url);
-      print('📡 Status code: ${response.statusCode}');
-      print('📩 Response body: ${response.body}');
+      print('URL: ${url}');
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);

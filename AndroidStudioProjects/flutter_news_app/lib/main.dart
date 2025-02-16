@@ -1,44 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_news_app/news_screen.dart';
 import 'package:flutter_news_app/favorites_screen.dart';
-import 'package:flutter_news_app/news_cell.dart';
 
 void main() {
   runApp(MaterialApp(
     home: MyApp(),
   ));
 }
-
-// void main() {
-//   List<News> newsList = [
-//     News(
-//       imageUrl: '',
-//       title: 'Новость 1',
-//       desc: 'Описание новости 1',
-//       date: '10:30 AM',
-//     ),
-//     News(
-//       imageUrl: '',
-//       title: 'Новость 2',
-//       desc: 'Описание новости 2',
-//       date: '10:30 AM'),
-//     // Добавьте другие новости сюда
-//   ];
-//
-//   runApp(
-//     MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(title: Text("Новости")),
-//         body: ListView.builder(
-//           itemCount: newsList.length,
-//           itemBuilder: (context, index) {
-//             return NewsCell(news: newsList[index]);
-//           },
-//         ),
-//       ),
-//     ),
-//   );
-// }
 
 class MyApp extends StatefulWidget {
   @override
