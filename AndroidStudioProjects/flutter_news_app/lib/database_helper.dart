@@ -20,9 +20,9 @@ class NewsDatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3, // Увеличиваем версию базы данных
+      version: 3,
       onCreate: _onCreate,
-      onUpgrade: _onUpgrade, // Указываем функцию для миграции
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -31,7 +31,7 @@ class NewsDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     await db.execute('''
     CREATE TABLE news(
-      id TEXT PRIMARY KEY,  
+      id TEXT PRIMARY KEY,
       title TEXT,
       link TEXT,
       description TEXT,
@@ -40,6 +40,18 @@ class NewsDatabaseHelper {
       sourceName TEXT
     )
   ''');
+
+    await db.execute('''
+       CREATE TABLE favorite_news(
+      id TEXT,
+      title TEXT,
+      link TEXT,
+      description TEXT,
+      pubDate TEXT,
+      imageUrl TEXT,
+      sourceName TEXT
+    )
+    ''');
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -91,12 +103,37 @@ class NewsDatabaseHelper {
     print("✅ Новости успешно записаны в БД.");
   }
 
-  Future<void> deleteDatabaseFile() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'news.db');
+  Future<void> toggleFavorite(News news) async {
+    final db = await instance.database;
 
-    // Удаление базы данных
-    await deleteDatabase(path);
-    print('База данных удалена');
+    final result = await db.query(
+      'favorite_news',
+      where: 'id = ?',
+      whereArgs: [news.articleId],
+    );
+
+    if (result.isEmpty) {
+      await db.insert(
+        'favorite_news',
+        <String, Object?>{
+          'id': news.articleId,
+          'title': news.title,
+          'link': news.link ?? '',
+          'description': news.description ?? '',
+          'pubDate': news.pubDate ?? '',
+          'imageUrl': news.imageUrl ?? '',
+          'sourceName': news.sourceName ?? '',
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      print("Новость добавлена в избранное с id: ${news.articleId}");
+    } else {
+      await db.delete(
+        'favorite_news',
+        where: 'id = ?',
+        whereArgs: [news.articleId],
+      );
+      print("Новость удалена из избранного с id: ${news.articleId}");
+    }
   }
 }

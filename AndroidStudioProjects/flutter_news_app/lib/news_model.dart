@@ -32,7 +32,7 @@ class News {
       'description': description,
       'pubDate': pubDate,
       'imageUrl': imageUrl,
-      'sourceName': sourceName
+      'sourceName': sourceName,
     };
   }
 

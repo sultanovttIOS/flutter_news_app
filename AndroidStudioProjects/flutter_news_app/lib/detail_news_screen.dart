@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_news_app/news_model.dart';
+import 'package:flutter_news_app/database_helper.dart';
 
 class DetailScreen extends StatefulWidget {
   final News news;
@@ -12,6 +13,33 @@ class DetailScreen extends StatefulWidget {
 
 class DetailScreenState extends State<DetailScreen> {
   bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    final db = NewsDatabaseHelper.instance;
+
+    final favorites = await db.database;
+    final result = await favorites.query(
+      'favorite_news',
+      where: 'id = ?',
+      whereArgs: [widget.news.articleId],
+    );
+
+    setState(() {
+      isLiked = result.isNotEmpty;
+    });
+  }
+
+  Future<void> _toggleFavorite() async {
+    await NewsDatabaseHelper.instance.toggleFavorite(widget.news);
+
+    _checkIfFavorite();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +55,7 @@ class DetailScreenState extends State<DetailScreen> {
               isLiked ? Icons.favorite : Icons.favorite_border,
               color: isLiked ? Colors.red : Colors.white,
             ),
-            onPressed: () {
-              setState(() {
-                isLiked = !isLiked;
-              });
-            },
+            onPressed: _toggleFavorite,
           ),
         ],
       ),
@@ -41,7 +65,6 @@ class DetailScreenState extends State<DetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Изображение новости
               Center(
                 child: Image.network(
                   news.imageUrl ?? 'https://www.pasadenastarnews.com/wp-content/uploads/2025/02/PAS-L-WOONPA-0214-01.jpg?strip=all&w=1400px',
@@ -52,7 +75,6 @@ class DetailScreenState extends State<DetailScreen> {
               ),
               const SizedBox(height: 16), // Отступ
 
-              // Заголовок новости
               Text(
                 news.title,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -69,21 +91,21 @@ class DetailScreenState extends State<DetailScreen> {
               // Ссылка на новость
               Text(
                 'Link: ${news.link ?? ''}',
-                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.normal)
-              ), // Отступ
+                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.normal),
+              ),
               const SizedBox(height: 16), // Отступ
 
               // Дата публикации
               Text(
                 'Published: ${news.pubDate ?? ''}',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 16), // Отступ
 
               // Описание новости
               Text(
                 news.description ?? '',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400)
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
               ),
             ],
           ),
